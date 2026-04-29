@@ -147,7 +147,7 @@ services:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
       - REALTIME_SERVICE=http://realtime:5004
-      - RESTAURANT_SERVICE_URL=http://restaurant:5001
+      - RESTAURANT_SERVICE=http://restaurant:5001
       - UTILS_SERVICE=http://utils:5002
       - RIDER_QUEUE=${RIDER_QUEUE}
       - ORDER_READY_QUEUE=${ORDER_READY_QUEUE}
@@ -171,6 +171,7 @@ services:
       - PORT=5006
       - NODE_ENV=development
       - MONGO_URI=mongodb://mongodb:27017/tomato_admin
+      - DB_NAME=Zomato_Clone
       - JWT_SEC=${JWT_SEC}
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
     depends_on:
@@ -198,6 +199,7 @@ services:
         - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
         - VITE_RAZORPAY_KEY=${RAZORPAY_KEY_ID}
         - VITE_STRIPE_PUBLIC_KEY=${STRIPE_PUBLISHABLE_KEY}
+        - VITE_INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
     container_name: tomato-frontend
     ports:
       - "3000:80"
