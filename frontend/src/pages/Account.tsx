@@ -5,10 +5,11 @@ import { BiLogOut, BiMapPin, BiPackage } from "react-icons/bi";
 
 const Account = () => {
   const { user, setUser, setIsAuth } = useAppData();
-
-  const firstLetter = user?.name.charAt(0).toUpperCase();
-
   const navigate = useNavigate();
+
+  if (!user) return null;
+
+  const firstLetter = user?.name?.charAt(0).toUpperCase() ?? "";
 
   const logoutHandler = () => {
     localStorage.setItem("token", "");

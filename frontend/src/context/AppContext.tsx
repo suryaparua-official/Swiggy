@@ -39,6 +39,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       setIsAuth(true);
     } catch (error) {
       console.log(error);
+      setIsAuth(false);
+      setUser(null);
+      localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }
@@ -85,7 +88,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
       try {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
         );
         const data = await res.json();
 
@@ -99,7 +102,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
           data.address.city ||
             data.address.town ||
             data.address.village ||
-            "Your Location"
+            "Your Location",
         );
         setLoadingLocation(false);
       } catch (error) {
