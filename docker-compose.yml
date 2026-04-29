@@ -1,15 +1,5 @@
-# ─────────────────────────────────────────────
-# docker-compose.yml — Local Development
-# Runs all services + RabbitMQ + MongoDB together
-# Not used in production — only for local development
-# ─────────────────────────────────────────────
-
 services:
-  # ╔═══════════════════════════════════════════
-  # ║ INFRASTRUCTURE
-  # ╚═══════════════════════════════════════════
-
-  # MongoDB — local database
+  # MongoDB — local database (use MongoDB Atlas in production)
   mongodb:
     image: mongo:7
     container_name: tomato-mongodb
@@ -41,6 +31,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
   # ╔═══════════════════════════════════════════
   # ║ BACKEND SERVICES
@@ -84,6 +75,10 @@ services:
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
       - AUTH_SERVICE_URL=http://auth:5000
       - UTILS_SERVICE_URL=http://utils:5002
+      - REALTIME_SERVICE_URL=http://realtime:5004
+      - PAYMENT_QUEUE=${PAYMENT_QUEUE}
+      - RIDER_QUEUE=${RIDER_QUEUE}
+      - ORDER_READY_QUEUE=${ORDER_READY_QUEUE}
     depends_on:
       mongodb:
         condition: service_healthy
@@ -111,6 +106,7 @@ services:
       - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
       - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - PAYMENT_QUEUE=${PAYMENT_QUEUE}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -149,6 +145,9 @@ services:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
       - REALTIME_SERVICE_URL=http://realtime:5004
+      - RESTAURANT_SERVICE_URL=http://restaurant:5001
+      - RIDER_QUEUE=${RIDER_QUEUE}
+      - ORDER_READY_QUEUE=${ORDER_READY_QUEUE}
     depends_on:
       mongodb:
         condition: service_healthy
@@ -190,17 +189,23 @@ services:
         - VITE_API_URL=http://localhost:5000
         - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
         - VITE_RAZORPAY_KEY=${RAZORPAY_KEY_ID}
-        - VITE_STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY}
+        - VITE_STRIPE_PUBLIC_KEY=${STRIPE_PUBLISHABLE_KEY}
     container_name: tomato-frontend
     ports:
       - "3000:80"
     depends_on:
-      - auth
-      - restaurant
-      - utils
-      - realtime
-      - rider
-      - admin
+      auth:
+        condition: service_started
+      restaurant:
+        condition: service_started
+      utils:
+        condition: service_started
+      realtime:
+        condition: service_started
+      rider:
+        condition: service_started
+      admin:
+        condition: service_started
     networks:
       - tomato-network
     restart: unless-stopped
