@@ -74,8 +74,8 @@ services:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
       - AUTH_SERVICE_URL=http://auth:5000
-      - UTILS_SERVICE_URL=http://utils:5002
-      - REALTIME_SERVICE_URL=http://realtime:5004
+      - UTILS_SERVICE=http://utils:5002
+      - REALTIME_SERVICE=http://realtime:5004
       - PAYMENT_QUEUE=${PAYMENT_QUEUE}
       - RIDER_QUEUE=${RIDER_QUEUE}
       - ORDER_READY_QUEUE=${ORDER_READY_QUEUE}
@@ -100,6 +100,8 @@ services:
       - NODE_ENV=development
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
+      - RESTAURANT_SERVICE=http://restaurant:5001
+      - FRONTEND_URL=http://localhost:3000
       - CLOUD_NAME=${CLOUD_NAME}
       - CLOUD_API_KEY=${CLOUD_API_KEY}
       - CLOUD_SECRET_KEY=${CLOUD_SECRET_KEY}
@@ -144,8 +146,9 @@ services:
       - JWT_SEC=${JWT_SEC}
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
       - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
-      - REALTIME_SERVICE_URL=http://realtime:5004
+      - REALTIME_SERVICE=http://realtime:5004
       - RESTAURANT_SERVICE_URL=http://restaurant:5001
+      - UTILS_SERVICE=http://utils:5002
       - RIDER_QUEUE=${RIDER_QUEUE}
       - ORDER_READY_QUEUE=${ORDER_READY_QUEUE}
     depends_on:
@@ -186,7 +189,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://localhost:5000
+        - VITE_AUTH_URL=http://localhost:5000
+        - VITE_RESTAURANT_URL=http://localhost:5001
+        - VITE_UTILS_URL=http://localhost:5002
+        - VITE_REALTIME_URL=http://localhost:5004
+        - VITE_RIDER_URL=http://localhost:5005
+        - VITE_ADMIN_URL=http://localhost:5006
         - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
         - VITE_RAZORPAY_KEY=${RAZORPAY_KEY_ID}
         - VITE_STRIPE_PUBLIC_KEY=${STRIPE_PUBLISHABLE_KEY}
