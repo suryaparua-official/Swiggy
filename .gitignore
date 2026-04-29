@@ -1,0 +1,41 @@
+# ── ENV FILES ──
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+services/**/.env
+frontend/.env
+
+# ── TERRAFORM ──
+*.tfvars
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+terraform/crash.log
+
+# ── NODE / NPM ──
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── IDE ──
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ── DOCKER ──
+docker-compose.override.yml

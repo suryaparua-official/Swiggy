@@ -1,0 +1,57 @@
+# ─────────────────────────────────────────────
+# .dockerignore — Frontend (React + Vite)
+# ─────────────────────────────────────────────
+
+# ── Node.js ──
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+.npm
+
+# ── Vite build artifacts ──
+dist/
+dist-ssr/
+.vite/
+
+# ── Environment files ──
+.env
+.env.*
+!.env.example
+
+# ── Git ──
+.git/
+.gitignore
+.gitattributes
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+
+# ── TypeScript ──
+*.tsbuildinfo
+
+# ── Tests ──
+coverage/
+__tests__/
+*.test.tsx
+*.test.ts
+
+# ── Docs ──
+README.md
+*.md
+
+# ── Docker ──
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# ── Misc ──
+.eslintcache
+*.log
+vercel.json

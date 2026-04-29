@@ -1,0 +1,221 @@
+# ─────────────────────────────────────────────
+# docker-compose.yml — Local Development
+# Runs all services + RabbitMQ + MongoDB together
+# Not used in production — only for local development
+# ─────────────────────────────────────────────
+
+services:
+  # ╔═══════════════════════════════════════════
+  # ║ INFRASTRUCTURE
+  # ╚═══════════════════════════════════════════
+
+  # MongoDB — local database
+  mongodb:
+    image: mongo:7
+    container_name: tomato-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - tomato-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ — message queue (use CloudAMQP in production)
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: tomato-rabbitmq
+    ports:
+      - "5672:5672" # AMQP protocol
+      - "15672:15672" # Management UI → http://localhost:15672 (guest/guest)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - tomato-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ╔═══════════════════════════════════════════
+  # ║ BACKEND SERVICES
+  # ╚═══════════════════════════════════════════
+
+  auth:
+    build:
+      context: ./services/auth
+      dockerfile: Dockerfile
+    container_name: tomato-auth
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/tomato_auth
+      - JWT_SEC=${JWT_SEC}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - tomato-network
+    restart: unless-stopped
+
+  restaurant:
+    build:
+      context: ./services/restaurant
+      dockerfile: Dockerfile
+    container_name: tomato-restaurant
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/tomato_restaurant
+      - JWT_SEC=${JWT_SEC}
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
+      - AUTH_SERVICE_URL=http://auth:5000
+      - UTILS_SERVICE_URL=http://utils:5002
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tomato-network
+    restart: unless-stopped
+
+  utils:
+    build:
+      context: ./services/utils
+      dockerfile: Dockerfile
+    container_name: tomato-utils
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+      - NODE_ENV=development
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
+      - CLOUD_NAME=${CLOUD_NAME}
+      - CLOUD_API_KEY=${CLOUD_API_KEY}
+      - CLOUD_SECRET_KEY=${CLOUD_SECRET_KEY}
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tomato-network
+    restart: unless-stopped
+
+  realtime:
+    build:
+      context: ./services/realtime
+      dockerfile: Dockerfile
+    container_name: tomato-realtime
+    ports:
+      - "5004:5004"
+    environment:
+      - PORT=5004
+      - NODE_ENV=development
+      - JWT_SEC=${JWT_SEC}
+      - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
+    networks:
+      - tomato-network
+    restart: unless-stopped
+
+  rider:
+    build:
+      context: ./services/rider
+      dockerfile: Dockerfile
+    container_name: tomato-rider
+    ports:
+      - "5005:5005"
+    environment:
+      - PORT=5005
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/tomato_rider
+      - JWT_SEC=${JWT_SEC}
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
+      - REALTIME_SERVICE_URL=http://realtime:5004
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - tomato-network
+    restart: unless-stopped
+
+  admin:
+    build:
+      context: ./services/admin
+      dockerfile: Dockerfile
+    container_name: tomato-admin
+    ports:
+      - "5006:5006"
+    environment:
+      - PORT=5006
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/tomato_admin
+      - JWT_SEC=${JWT_SEC}
+      - INTERNAL_SERVICE_KEY=${INTERNAL_SERVICE_KEY}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - tomato-network
+    restart: unless-stopped
+
+  # ╔═══════════════════════════════════════════
+  # ║ FRONTEND
+  # ╚═══════════════════════════════════════════
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000
+        - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+        - VITE_RAZORPAY_KEY=${RAZORPAY_KEY_ID}
+        - VITE_STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY}
+    container_name: tomato-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth
+      - restaurant
+      - utils
+      - realtime
+      - rider
+      - admin
+    networks:
+      - tomato-network
+    restart: unless-stopped
+
+# ╔═══════════════════════════════════════════
+# ║ NETWORKS & VOLUMES
+# ╚═══════════════════════════════════════════
+
+networks:
+  tomato-network:
+    driver: bridge
+    name: tomato-network
+
+volumes:
+  mongo_data:
+    name: tomato-mongo-data
+  rabbitmq_data:
+    name: tomato-rabbitmq-data
