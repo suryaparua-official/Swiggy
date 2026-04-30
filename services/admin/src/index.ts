@@ -12,7 +12,12 @@ app.use(
     credentials: true,
   }),
 );
+
 app.use("/api/v1", adminRoutes);
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`Admin Service is running on port ${process.env.PORT}`);

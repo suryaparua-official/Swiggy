@@ -25,6 +25,7 @@ jobs:
           args: --severity-threshold=high --all-projects
         continue-on-error: true
 
+  # ──── JOB 2: Build + Scan + Push ────
   build-and-scan:
     name: Build + Trivy scan — ${{ matrix.service }}
     needs: security-scan

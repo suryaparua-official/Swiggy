@@ -23,6 +23,10 @@ const server = http.createServer(app);
 
 initSocket(server);
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 server.listen(process.env.PORT, () => {
   console.log(`Realtime service is running port ${process.env.PORT}`);
 });

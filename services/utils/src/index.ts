@@ -39,6 +39,10 @@ app.use("/api/payment", paymentRoutes);
 
 const PORT = process.env.PORT || 5002;
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 app.listen(PORT, () => {
   console.log(`Utils service is running on port ${PORT}`);
 });

@@ -22,6 +22,10 @@ app.use(
 
 app.use("/api/rider", riderRoutes);
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 app.listen(process.env.PORT, () => {
   console.log(`Rider service is running on port ${process.env.PORT}`);
   connectDB();
