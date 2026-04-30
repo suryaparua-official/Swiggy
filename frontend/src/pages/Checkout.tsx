@@ -120,7 +120,7 @@ const Checkout = () => {
         key,
         amount: amount * 100,
         currency: "INR",
-        name: "Tomato", //your business name
+        name: "Swiggy", //your business name
         description: "Food Order Payment",
         order_id: razorpayOrderId,
 
