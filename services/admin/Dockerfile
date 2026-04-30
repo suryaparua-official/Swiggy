@@ -3,23 +3,27 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN npm install
+RUN npm ci
 
 COPY tsconfig.json ./
-
 COPY src ./src
-
 RUN npm run build
 
-FROM node:22-alpine 
+
+FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+RUN addgroup -g 1001 -S nodejs && adduser -S nodeapp -u 1001
 
-RUN npm install --only=production
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 
-CMD [ "node", "dist/index.js" ]
+RUN chown -R nodeapp:nodejs /app
+USER nodeapp
+
+EXPOSE 5006
+
+CMD ["node", "dist/index.js"]
