@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: realtime
-          image: surya850/swiggy-realtime:latest
+          image: surya850/swiggy-realtime:2c7b564e2c3f9fb2ce01051cea5ef353df57e6e9
           ports:
             - containerPort: 5004
           env:
