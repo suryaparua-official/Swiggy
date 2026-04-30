@@ -24,7 +24,49 @@ spec:
                 name: restaurant-service
                 port:
                   number: 5001
+          - path: /api/order
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-service
+                port:
+                  number: 5001
+          - path: /api/cart
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-service
+                port:
+                  number: 5001
+          - path: /api/address
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-service
+                port:
+                  number: 5001
+          - path: /api/menu
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-service
+                port:
+                  number: 5001
           - path: /api/utils
+            pathType: Prefix
+            backend:
+              service:
+                name: utils-service
+                port:
+                  number: 5002
+          - path: /api/payment
+            pathType: Prefix
+            backend:
+              service:
+                name: utils-service
+                port:
+                  number: 5002
+          - path: /api/upload
             pathType: Prefix
             backend:
               service:
