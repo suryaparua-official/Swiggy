@@ -8,6 +8,8 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+RUN apk --no-cache upgrade
+
 # Vite requires environment variables at build time
 # Inject via build args (in production use: docker build --build-arg)
 ARG VITE_AUTH_URL
@@ -41,6 +43,8 @@ RUN npm run build
 
 # ===== Stage 2: nginx production =====
 FROM nginx:1.27-alpine
+
+RUN apk --no-cache upgrade
 
 # Remove default nginx config and use custom config
 RUN rm /etc/nginx/conf.d/default.conf
