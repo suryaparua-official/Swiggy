@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: swiggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth
+          image: DOCKERHUB_USERNAME/swiggy-auth:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: "5000"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: swiggy-config
+                  key: NODE_ENV
+            - name: JWT_SEC
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: JWT_SEC
+            - name: INTERNAL_SERVICE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: INTERNAL_SERVICE_KEY
+          - name: MONGO_URI
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: MONGO_URI
+          - name: GOOGLE_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: GOOGLE_CLIENT_ID
+          - name: GOOGLE_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: GOOGLE_CLIENT_SECRET
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5

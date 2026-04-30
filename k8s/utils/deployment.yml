@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utils-service
+  namespace: swiggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: utils-service
+  template:
+    metadata:
+      labels:
+        app: utils-service
+    spec:
+      containers:
+        - name: utils
+          image: DOCKERHUB_USERNAME/swiggy-utils:latest
+          ports:
+            - containerPort: 5002
+          env:
+            - name: PORT
+              value: "5002"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: swiggy-config
+                  key: NODE_ENV
+            - name: JWT_SEC
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: JWT_SEC
+            - name: INTERNAL_SERVICE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: INTERNAL_SERVICE_KEY
+          - name: RABBITMQ_URL
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: RABBITMQ_URL
+          - name: CLOUD_NAME
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: CLOUD_NAME
+          - name: CLOUD_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: CLOUD_API_KEY
+          - name: CLOUD_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: CLOUD_SECRET_KEY
+          - name: RAZORPAY_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: RAZORPAY_KEY_ID
+          - name: RAZORPAY_KEY_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: RAZORPAY_KEY_SECRET
+          - name: STRIPE_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: STRIPE_SECRET_KEY
+          - name: RESTAURANT_SERVICE
+            valueFrom:
+              configMapKeyRef:
+                name: swiggy-config
+                key: RESTAURANT_SERVICE
+          - name: FRONTEND_URL
+            valueFrom:
+              configMapKeyRef:
+                name: swiggy-config
+                key: FRONTEND_URL
+          - name: PAYMENT_QUEUE
+            valueFrom:
+              configMapKeyRef:
+                name: swiggy-config
+                key: PAYMENT_QUEUE
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 10
+            periodSeconds: 5

@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+  namespace: swiggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-service
+  template:
+    metadata:
+      labels:
+        app: admin-service
+    spec:
+      containers:
+        - name: admin
+          image: DOCKERHUB_USERNAME/swiggy-admin:latest
+          ports:
+            - containerPort: 5006
+          env:
+            - name: PORT
+              value: "5006"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: swiggy-config
+                  key: NODE_ENV
+            - name: JWT_SEC
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: JWT_SEC
+            - name: INTERNAL_SERVICE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: INTERNAL_SERVICE_KEY
+          - name: MONGO_URI
+            valueFrom:
+              secretKeyRef:
+                name: swiggy-secrets
+                key: MONGO_URI
+          - name: DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: swiggy-config
+                key: DB_NAME
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5006
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5006
+            initialDelaySeconds: 10
+            periodSeconds: 5
