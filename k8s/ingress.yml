@@ -31,6 +31,13 @@ spec:
                 name: utils-service
                 port:
                   number: 5002
+          - path: /socket.io
+            pathType: Prefix
+            backend:
+              service:
+                name: realtime-service
+                port:
+                  number: 5004
           - path: /api/realtime
             pathType: Prefix
             backend:
