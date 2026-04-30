@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: utils
-          image: surya850/swiggy-utils:2c7b564e2c3f9fb2ce01051cea5ef353df57e6e9
+          image: surya850/swiggy-utils:10594fbddb2c893e3d60daa4d956ceb5359a09dd
           ports:
             - containerPort: 5002
           env:
