@@ -6,9 +6,12 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "gce"
     kubernetes.io/ingress.global-static-ip-name: "swiggy-ip"
+    networking.gke.io/managed-certificates: "swiggy-cert"
+    kubernetes.io/ingress.allow-http: "true"
 spec:
   rules:
-    - http:
+    - host: swiggy-surya.duckdns.org
+      http:
         paths:
           - path: /api/auth
             pathType: Prefix
