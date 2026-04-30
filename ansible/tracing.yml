@@ -1,0 +1,42 @@
+---
+- name: Install tracing stack (Jaeger + OpenTelemetry Collector)
+  hosts: local
+
+  tasks:
+    - name: Add Jaeger Helm repo
+      command: helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+
+    - name: Add OpenTelemetry Helm repo
+      command: helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+
+    - name: Update Helm repos
+      command: helm repo update
+
+    - name: Create tracing namespace
+      command: kubectl create namespace tracing --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Install Jaeger (all-in-one for PoC)
+      command: >
+        helm upgrade --install jaeger
+        jaegertracing/jaeger
+        --namespace tracing
+        --set allInOne.enabled=true
+        --set collector.enabled=false
+        --set query.enabled=false
+        --set agent.enabled=false
+        --wait --timeout 180s
+
+    - name: Install OpenTelemetry Collector
+      command: >
+        helm upgrade --install otel-collector
+        open-telemetry/opentelemetry-collector
+        --namespace tracing
+        --set mode=daemonset
+        --set config.exporters.jaeger.endpoint="jaeger-collector.tracing.svc.cluster.local:14250"
+        --wait --timeout 180s
+
+    - name: Print Jaeger UI access instructions
+      debug:
+        msg: >
+          Access Jaeger UI: kubectl port-forward svc/jaeger-query 16686:80 -n tracing
+          Then open http://localhost:16686

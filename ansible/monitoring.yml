@@ -1,0 +1,44 @@
+---
+- name: Install monitoring stack (Prometheus + Grafana + Loki)
+  hosts: local
+
+  tasks:
+    - name: Add Prometheus community Helm repo
+      command: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+    - name: Add Grafana Helm repo (for Loki)
+      command: helm repo add grafana https://grafana.github.io/helm-charts
+
+    - name: Update Helm repos
+      command: helm repo update
+
+    - name: Create monitoring namespace
+      command: kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Install kube-prometheus-stack (Prometheus + Grafana + Alertmanager)
+      command: >
+        helm upgrade --install kube-prometheus-stack
+        prometheus-community/kube-prometheus-stack
+        --namespace monitoring
+        --set grafana.adminPassword=admin123
+        --set prometheus.prometheusSpec.retention=7d
+        --set prometheus.prometheusSpec.retentionSize=5GB
+        --set alertmanager.alertmanagerSpec.retention=120h
+        --wait --timeout 300s
+
+    - name: Install Loki stack (Loki + Promtail)
+      command: >
+        helm upgrade --install loki
+        grafana/loki-stack
+        --namespace monitoring
+        --set promtail.enabled=true
+        --set loki.persistence.enabled=false
+        --wait --timeout 180s
+
+    - name: Print Grafana access instructions
+      debug:
+        msg: >
+          Access Grafana: kubectl port-forward svc/kube-prometheus-stack-grafana
+          3000:80 -n monitoring
+          Username: admin  Password: admin123
+          Add Loki datasource URL: http://loki:3100

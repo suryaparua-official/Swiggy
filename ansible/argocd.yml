@@ -1,0 +1,35 @@
+---
+- name: Install ArgoCD on GKE
+  hosts: local
+  vars:
+    argocd_version: "v2.13.0"
+    argocd_namespace: argocd
+
+  tasks:
+    - name: Create ArgoCD namespace
+      command: kubectl create namespace {{ argocd_namespace }} --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Install ArgoCD
+      command: >
+        kubectl apply -n {{ argocd_namespace }}
+        -f https://raw.githubusercontent.com/argoproj/argo-cd/{{ argocd_version }}/manifests/install.yaml
+
+    - name: Wait for ArgoCD server to be ready
+      command: >
+        kubectl rollout status deployment/argocd-server
+        -n {{ argocd_namespace }} --timeout=180s
+
+    - name: Patch ArgoCD server service to ClusterIP (access via port-forward)
+      command: >
+        kubectl patch svc argocd-server -n {{ argocd_namespace }}
+        -p '{"spec":{"type":"ClusterIP"}}'
+
+    - name: Apply ArgoCD application manifest
+      command: kubectl apply -f k8s/argocd-app.yml
+
+    - name: Print initial admin password command
+      debug:
+        msg: >
+          Run this to get the initial ArgoCD password:
+          kubectl -n argocd get secret argocd-initial-admin-secret
+          -o jsonpath="{.data.password}" | base64 -d
