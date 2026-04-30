@@ -48,6 +48,13 @@ spec:
                 name: restaurant-service
                 port:
                   number: 5001
+          - path: /api/item
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant-service
+                port:
+                  number: 5001
           - path: /api/menu
             pathType: Prefix
             backend:

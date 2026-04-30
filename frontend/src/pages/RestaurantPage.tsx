@@ -21,7 +21,7 @@ const RestaurantPage = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       setRestaurant(data || null);
@@ -40,12 +40,13 @@ const RestaurantPage = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
-      setMenuItems(data);
+      setMenuItems(Array.isArray(data) ? data : []);
     } catch (error) {
       console.log(error);
+      setMenuItems([]);
     }
   };
 
