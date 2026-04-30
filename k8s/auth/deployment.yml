@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: DOCKERHUB_USERNAME/swiggy-auth:latest
+          image: surya850/swiggy-auth:latest
           ports:
             - containerPort: 5000
           env:
@@ -36,21 +36,21 @@ spec:
                 secretKeyRef:
                   name: swiggy-secrets
                   key: INTERNAL_SERVICE_KEY
-          - name: MONGO_URI
-            valueFrom:
-              secretKeyRef:
-                name: swiggy-secrets
-                key: MONGO_URI
-          - name: GOOGLE_CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                name: swiggy-secrets
-                key: GOOGLE_CLIENT_ID
-          - name: GOOGLE_CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: swiggy-secrets
-                key: GOOGLE_CLIENT_SECRET
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: MONGO_URI
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: GOOGLE_CLIENT_SECRET
           resources:
             requests:
               memory: "128Mi"

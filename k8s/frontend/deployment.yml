@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: DOCKERHUB_USERNAME/swiggy-frontend:latest
+          image: surya850/swiggy-frontend:latest
           ports:
             - containerPort: 80
           resources:
@@ -31,6 +31,7 @@ spec:
               port: 80
             initialDelaySeconds: 10
             periodSeconds: 10
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /health

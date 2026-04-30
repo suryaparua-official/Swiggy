@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: realtime
-          image: DOCKERHUB_USERNAME/swiggy-realtime:latest
+          image: surya850/swiggy-realtime:latest
           ports:
             - containerPort: 5004
           env:
@@ -36,7 +36,6 @@ spec:
                 secretKeyRef:
                   name: swiggy-secrets
                   key: INTERNAL_SERVICE_KEY
-
           resources:
             requests:
               memory: "128Mi"

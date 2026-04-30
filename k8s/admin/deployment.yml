@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: admin
-          image: DOCKERHUB_USERNAME/swiggy-admin:latest
+          image: surya850/swiggy-admin:latest
           ports:
             - containerPort: 5006
           env:
@@ -36,16 +36,16 @@ spec:
                 secretKeyRef:
                   name: swiggy-secrets
                   key: INTERNAL_SERVICE_KEY
-          - name: MONGO_URI
-            valueFrom:
-              secretKeyRef:
-                name: swiggy-secrets
-                key: MONGO_URI
-          - name: DB_NAME
-            valueFrom:
-              configMapKeyRef:
-                name: swiggy-config
-                key: DB_NAME
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: swiggy-secrets
+                  key: MONGO_URI
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: swiggy-config
+                  key: DB_NAME
           resources:
             requests:
               memory: "128Mi"
