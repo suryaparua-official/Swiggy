@@ -850,6 +850,9 @@ In Grafana → Explore → Loki:
 
 ### Slack Integration
 
+<img width="961" height="877" alt="Screenshot 2026-05-01 051313" src="https://github.com/user-attachments/assets/5ffa99b3-fd0d-4964-a4ea-de57050d28b3" />
+
+
 Configure Alertmanager to send alerts to Slack:
 
 ```bash
