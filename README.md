@@ -26,6 +26,16 @@ A production-grade, cloud-native food delivery application built with a microser
 
 ---
 
+## 📄 Project Report
+
+A complete technical report covering architecture, system design, infrastructure, CI/CD, monitoring, cost analysis, and deployment guide is available:
+
+[![View Full Report](https://img.shields.io/badge/📄_Full_Technical_Report-View_PDF-red?style=for-the-badge)](https://drive.google.com/file/d/1oOQgKfPxiEWupUYhOeUXy6AY56kVEEX_/view?usp=sharing)
+
+> Covers: Architecture · Microservices Design · GCP Infrastructure · CI/CD Pipeline · Security · Monitoring · Cost Analysis · API Reference · SLOs
+
+---
+
 ## 🌟 Overview
 
 Tomato is a full-stack food delivery platform similar to Swiggy/Zomato. It supports three types of users:
@@ -988,13 +998,3 @@ MIT License — see [LICENSE.md](LICENSE.md)
 
 - GitHub: [@suryaparua-official](https://github.com/suryaparua-official)
 - DockerHub: [surya850](https://hub.docker.com/u/surya850)
-
-## 📄 Project Report
-
-A complete technical report covering architecture, system design, infrastructure, CI/CD, monitoring, cost analysis, and deployment guide is available:
-
-[![View Full Report](https://img.shields.io/badge/📄_Full_Technical_Report-View_PDF-red?style=for-the-badge)](https://drive.google.com/file/d/1oOQgKfPxiEWupUYhOeUXy6AY56kVEEX_/view?usp=sharing)
-
-> Covers: Architecture · Microservices Design · GCP Infrastructure · CI/CD Pipeline · Security · Monitoring · Cost Analysis · API Reference · SLOs
-
----
