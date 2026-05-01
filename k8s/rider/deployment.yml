@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: rider
-          image: surya850/swiggy-rider:969b1c211b4a8eb7148dacfe7d5fd6945993b37a
+          image: surya850/swiggy-rider:0833eab5e816700dfc4f02cbb770e0d2f673ce1e
           ports:
             - containerPort: 5005
           env:
