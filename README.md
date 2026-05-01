@@ -803,13 +803,12 @@ kubectl port-forward svc/jaeger 16686:16686 -n tracing &
 
 ### Grafana Dashboards
 
-```
+
 <img width="1919" height="937" alt="Screenshot 2026-05-01 043312" src="https://github.com/user-attachments/assets/791b3e73-9dfa-4c31-ae22-e881117c993f" />
-```
-```
+
+
 <img width="1919" height="944" alt="Screenshot 2026-05-01 043545" src="https://github.com/user-attachments/assets/fc6eaa89-fcb0-4758-8d13-7f15d6d56105" />
 
-```
 
 Pre-installed dashboards (via kube-prometheus-stack):
 
@@ -858,15 +857,12 @@ In Grafana → Explore → Loki:
 
 ### Slack Integration
 
-```
+
 <img width="961" height="877" alt="Screenshot 2026-05-01 051313" src="https://github.com/user-attachments/assets/5ffa99b3-fd0d-4964-a4ea-de57050d28b3" />
-```
 
 Configure Alertmanager to send alerts to Slack:
 
-```
 <img width="1369" height="945" alt="Screenshot 2026-05-01 044452" src="https://github.com/user-attachments/assets/32847bbb-9919-47f8-bb35-c92b1e4d6a0f" />
-```
 
 ```bash
 cat > /tmp/alertmanager.yml << 'EOF'
