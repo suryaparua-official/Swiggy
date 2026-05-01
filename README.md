@@ -592,6 +592,10 @@ gcloud compute addresses describe swiggy-ip --global --format="get(address)"
 3. Enter your static IP from Step 5
 4. Click **Update IP**
 
+
+<img width="940" height="675" alt="Screenshot 2026-04-30 231325" src="https://github.com/user-attachments/assets/1de1959b-8684-4837-b1dc-634d6a5ac8f9" />
+
+
 ### Phase 7: Update k8s/managed-certificate.yml
 
 ```yaml
@@ -711,6 +715,12 @@ GitHub Actions will:
 4. Update k8s manifests with new image tags
 5. Create Kubernetes secrets from GitHub Secrets
 
+
+<img width="950" height="537" alt="Screenshot 2026-04-30 232909" src="https://github.com/user-attachments/assets/b39d4b09-6224-48b8-9532-49a16f516144" />
+
+
+
+
 ArgoCD will detect the manifest changes and deploy automatically.
 
 ### Phase 13: Apply Kubernetes Secrets Manually
@@ -768,6 +778,13 @@ Triggers when CI succeeds:
 
 ArgoCD detects the commit and performs rolling deployment with zero downtime.
 
+
+<img width="1919" height="944" alt="Screenshot 2026-05-01 042509" src="https://github.com/user-attachments/assets/ac5f0888-c148-4095-9b3f-79836572360b" />
+
+<img width="1919" height="951" alt="Screenshot 2026-05-01 042224" src="https://github.com/user-attachments/assets/213ec0f9-54b3-4b46-8764-0c8889258a1f" />
+
+
+
 ---
 
 ## 📊 Monitoring & Observability
@@ -819,6 +836,10 @@ Pre-installed dashboards (via kube-prometheus-stack):
 
 ### Useful Prometheus Queries
 
+
+<img width="1919" height="982" alt="Screenshot 2026-05-01 042801" src="https://github.com/user-attachments/assets/49ff1079-9800-426e-83a9-989b8f184f76" />
+
+
 ```promql
 # All pods running status
 up
@@ -859,6 +880,7 @@ In Grafana → Explore → Loki:
 
 
 <img width="961" height="877" alt="Screenshot 2026-05-01 051313" src="https://github.com/user-attachments/assets/5ffa99b3-fd0d-4964-a4ea-de57050d28b3" />
+
 
 Configure Alertmanager to send alerts to Slack:
 
